@@ -53,13 +53,17 @@ Return the response as JSON in this exact format:
     // Ask Gemini
     const result = await model.generateContent(prompt);
 
-    // Gemini may return JSON or plain text, handle both
-    let text = result.response.text();
+    // Handle Markdown fences and ensure valid JSON
+    let text = result.response.text().trim();
+    if (text.startsWith("```")) {
+      text = text.replace(/```json\n?/, "").replace(/```$/, "").trim();
+    }
+
     let parsed: any = {};
     try {
       parsed = JSON.parse(text);
     } catch {
-      // If Gemini didn't return JSON, wrap manually
+      // If Gemini didn't return JSON, fallback
       parsed = { adCopies: text.split("\n").filter(Boolean) };
     }
 
