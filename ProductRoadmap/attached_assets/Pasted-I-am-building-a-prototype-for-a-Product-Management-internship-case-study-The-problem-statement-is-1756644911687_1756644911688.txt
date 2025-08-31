@@ -1,0 +1,45 @@
+I am building a prototype for a Product Management internship case study. 
+The problem statement is: "Design a Self-Serve Campaign Creation Tool for SMB advertisers." 
+
+Context:
+- SMB advertisers struggle with creating ad campaigns because current ad platforms (Google, Meta) are too complex. 
+- Our MVP must simplify campaign setup into a guided flow, focusing on ease of use, speed (<5 min to create), and AI assistance. 
+- The target audience: small business owners with low budgets (₹500–₹50,000) and no dedicated marketing team. 
+- Success metrics: campaign creation completion rate, activation rate, and simplicity of UI. 
+- We want a working prototype hosted on Replit that demonstrates the full end-to-end campaign creation journey, even if data is dummy. 
+
+Build a React + Tailwind web app with the following functionality: 
+
+🔹 App Flow (5-step Wizard + Dashboard)
+1. **Welcome Screen** – Intro card: “Create your first campaign in 5 easy steps.”
+2. **Objective Selection** – radio buttons with cards: Awareness, Traffic, Sales. Show short description for each.
+3. **Budget Selection** – slider (₹500 – ₹50,000). Show estimated reach dynamically (simple linear formula: Reach = Budget * 10). Display budget summary card.
+4. **Creative Upload** – 
+   - Input field for product description/ad copy.
+   - Upload button for image (optional).
+   - Button “Generate Ad Copy” → calls OpenAI GPT API → returns 2–3 suggested catchy ad copy variants (store them in state, allow user to pick one).
+5. **Audience Targeting** – dropdowns for: 
+   - Location (predefined list of cities).
+   - Age range (18–65).
+   - Gender (All/Male/Female).
+   - Checkbox “Auto Audience Suggestion” → auto-fill values.
+6. **Preview & Launch** – show campaign card with:
+   - Objective
+   - Budget & estimated reach
+   - Final ad copy + image
+   - Targeting details
+   - “Launch Campaign” button → on click, show success screen with dummy Campaign ID.
+7. **Dashboard Page (Post-Launch)** – simple table or card layout summarizing all campaigns launched (campaign name, budget, reach, status). Keep in state (no backend). 
+
+🔹 Additional Requirements
+- Keep navigation intuitive with “Next/Back” buttons and progress bar (20% → 100%). 
+- Store selections in React state across steps. 
+- Keep UI clean: card-based, mobile-friendly, soft shadows, rounded corners. 
+- Add placeholder illustrations/icons for friendliness. 
+- No real ad APIs needed → simulate campaign launch. 
+- Only GPT API call for ad copy generation should be real (use OpenAI API key integration).
+
+Deliverable:
+- Fully working React + Tailwind web app.
+- Hosted on Replit, with public URL to demo.
+- The prototype should feel like a polished MVP to showcase product sense, not just barebones UI.
