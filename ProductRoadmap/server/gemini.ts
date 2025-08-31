@@ -6,7 +6,7 @@ import { GoogleGenAI } from "@google/genai";
 //   - do not change this unless explicitly requested by the user
 
 // This API key is from Gemini Developer API Key, not vertex AI API Key
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "AIzaSyD8LIMEyITAAleIHPTE9_wAzV1uUvIaBeo" });
 
 export async function generateAdCopyWithGemini(productDescription: string, objective: string): Promise<string[]> {
     try {
