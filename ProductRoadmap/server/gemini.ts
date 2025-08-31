@@ -1,24 +1,38 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // DON'T DELETE THIS COMMENT
 // Follow these instructions when using this blueprint:
-// - Note that the newest Gemini model series is "gemini-2.5-flash" or gemini-2.5-pro"
+// - Note that the newest Gemini model series is "gemini-2.5-flash" or "gemini-2.5-pro"
 //   - do not change this unless explicitly requested by the user
 
-// This API key is from Gemini Developer API Key, not vertex AI API Key
-const ai = new GoogleGenAI({ apiKey:"GEMINI_API_KEY" || "AIzaSyAGNC9DpVhS19llcj_3NDcHJ6k_jSYvVvE" });
+// Load API key from environment variable
+const apiKey = process.env.GEMINI_API_KEY;
+if (!apiKey) {
+  throw new Error("Missing GEMINI_API_KEY environment variable");
+}
 
-export async function generateAdCopyWithGemini(productDescription: string, objective: string): Promise<string[]> {
-    try {
-        const objectivePrompts = {
-            awareness: "brand awareness and visibility",
-            traffic: "driving website traffic and clicks",
-            sales: "sales conversions and purchases"
-        };
+// Initialize the Gemini client
+const genAI = new GoogleGenerativeAI("AIzaSyAGNC9DpVhS19llcj_3NDcHJ6k_jSYvVvE");
 
-        const objectiveText = objectivePrompts[objective as keyof typeof objectivePrompts] || "general marketing";
+// Use the model
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-        const prompt = `Create 3 compelling, concise ad copy variations for ${objectiveText} based on this product description: "${productDescription}". 
+export async function generateAdCopyWithGemini(
+  productDescription: string,
+  objective: string
+): Promise<string[]> {
+  try {
+    const objectivePrompts = {
+      awareness: "brand awareness and visibility",
+      traffic: "driving website traffic and clicks",
+      sales: "sales conversions and purchases",
+    };
+
+    const objectiveText =
+      objectivePrompts[objective as keyof typeof objectivePrompts] ||
+      "general marketing";
+
+    const prompt = `Create 3 compelling, concise ad copy variations for ${objectiveText} based on this product description: "${productDescription}". 
 
 Requirements:
 - Each copy should be under 100 characters
@@ -36,27 +50,21 @@ Return the response as JSON in this exact format:
   ]
 }`;
 
-        const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            config: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: "object",
-                    properties: {
-                        adCopies: {
-                            type: "array",
-                            items: { type: "string" },
-                        },
-                    },
-                    required: ["adCopies"],
-                },
-            },
-            contents: prompt,
-        });
+    // Ask Gemini
+    const result = await model.generateContent(prompt);
 
-        const result = JSON.parse(response.text || "{}");
-        return result.adCopies || [];
-    } catch (error) {
-        throw new Error(`Failed to generate ad copy with Gemini: ${error}`);
+    // Gemini may return JSON or plain text, handle both
+    let text = result.response.text();
+    let parsed: any = {};
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      // If Gemini didn't return JSON, wrap manually
+      parsed = { adCopies: text.split("\n").filter(Boolean) };
     }
+
+    return parsed.adCopies || [];
+  } catch (error) {
+    throw new Error(`Failed to generate ad copy with Gemini: ${error}`);
+  }
 }
